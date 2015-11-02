@@ -9,7 +9,7 @@ class AirportChallenge
   end
   # could  generalize with method_missing - but defending against incoming data in initialize better
   def rspec_tests
-    @rspec_tests.nil? ? 0 : @rspec_tests.to_f / 19.0
+    @rspec_tests.nil? ? 0 : @rspec_tests.to_f / 19.0 # TODO have to work out max values for the set ... class method
   end
   def rspec_failures
     @rspec_failures.nil? ? 0 : @rspec_failures.to_f

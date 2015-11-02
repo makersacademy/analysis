@@ -12,9 +12,9 @@ class Person
   end
 
   def days_to_offer
-    return AVERAGE_DAYS_TO_OFFER * 2 if first_offer_date.empty? # count give double the max length as a guestimate for the population?
+    return 1 if first_offer_date.empty? # count give double the max length as a guestimate for the population?
     offer = Date.parse first_offer_date
     cohort_start = Date.parse cohort # TODO this is not quite correct - need to correct for actual start of cohort ...
-    (offer - cohort_start).to_i
+    (offer - cohort_start).to_f / (AVERAGE_DAYS_TO_OFFER * 2)
   end
 end

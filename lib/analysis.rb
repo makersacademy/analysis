@@ -46,6 +46,9 @@ CSV.foreach('hired_data.csv',CSV_CONFIG) do |row|
   file = "../airport_challenge/analysis/#{person.github_id}.txt"
   airport_challenge_data = File.read(file) 
   rspec_tests = airport_challenge_data[/(\d+) examples, (\d+) failure/, 1]
+  rspec_pending = airport_challenge_data[/(\d+) examples, (\d+) failures?, (\d+) pending/, 3]
+  # TODO check for values here - or should we exclude those who didn't submit anything?
+  rspec_test -= rspec_pending
   rspec_failures = airport_challenge_data[/(\d+) examples, (\d+) failure/, 2]
 
   rubocop_files_inspected = airport_challenge_data[/(\d+) files inspected, (\d+) offenses detected/, 1]
@@ -69,10 +72,34 @@ CSV.foreach('hired_data.csv',CSV_CONFIG) do |row|
   # found another 61 missing --> might need to look at them individually?  will try fetch
   # possible reasons include deleted pull request, deleted repo, changed github user name
   # * andyg72 --> changed to andygnewman
+  # * minhajraz --> mohamedIssaq (no additional commits in challenge)
+  # * bhrinchev --> no public repos
+  # * siaovosh --> no additional commits in repo
+  # * timoxman --> should check first version (he resubmitted in July) --> need to work out first submission date and check that
   # * robertpulson --> no airport challenge repo
+  # * stefan2422 --> no airport challenge repo
+  # * benjamink14 --> benny-kollek
+  # * monooran1 --> no public repos
+  # * guspowell --> airport challenge not linked (should check when first submitted)
+  # * ddemkiw --> https://github.com/ddemkiw/Airport (redo - can we grab first version?)
+  # * mgedw --> account deleted
+  # 
+  # should there be coverage data for specs? I think not - but if it's consistent, then okay I guess
+  # 
   #  JUNK DATA FOR MOST OF DECEMBER AND FEBRUARY COHORTS - need to check all repos and redo basir
   # Airport challenge runs
-  #  => ["andyg72", "theoleanse", "minhajraz", "bhrinchev", "siavosh", "timoxman", "stefan2422", "benjamink14", "monooran1", "guspowell", "andyg72", "ddemkiw", "iggyster3", "kierangoodacre", "mgedw", "tekhuy", "clint77", "indiadearlove", "olucas92", "jjlakin", "HannahCarney", "ciawalsh", "jackrubio26", "BibianaC", "stepholdcorn", "marcinwal", "matteomanzo", "jindai1783", "sandagolcea", "emilysas", "ptolemybarnes", "lukeclewlow", "jacobmitchinson", "jakealvarez", "GabeMaker", "noughtsandones", "newmanj77", "katebeavis", "c-christenson", "alexparkinson1", "ErikAGriffin", "costassarris", "wardymate", "robertpulson", "TStrothjohann", "tomcoakes", " kevinlanzon", "sphaughton", "SebastienPires", " guidovitafinzi", "vvirgitti", "tommasobratto", "eddbrown", "braunsnow", "Pau1fitz", "velingcreate", "loris-fo", "meads58", "RizAli", "jdiegoromero", "user9319062"] 
+  #  => ["andyg72", "theoleanse", "minhajraz", "bhrinchev", "siavosh", "timoxman", 
+  # "stefan2422", "benjamink14", "monooran1", "guspowell", "andyg72", "ddemkiw", 
+  # "iggyster3", "kierangoodacre", "mgedw", "tekhuy", "clint77", "indiadearlove", 
+  # "olucas92", "jjlakin", "HannahCarney", "ciawalsh", "jackrubio26", "BibianaC", 
+  # "stepholdcorn", "marcinwal", "matteomanzo", "jindai1783", "sandagolcea", 
+
+  # "emilysas", "ptolemybarnes", "lukeclewlow", "jacobmitchinson", "jakealvarez", 
+  # "GabeMaker", "noughtsandones", "newmanj77", "katebeavis", "c-christenson", 
+  # "alexparkinson1", "ErikAGriffin", "costassarris", "wardymate", "robertpulson",
+  # "TStrothjohann", "tomcoakes", " kevinlanzon", "sphaughton", "SebastienPires",
+  # "guidovitafinzi", "vvirgitti", "tommasobratto", "eddbrown", "braunsnow", "Pau1fitz",
+  # "velingcreate", "loris-fo", "meads58", "RizAli", "jdiegoromero", "user9319062"] 
   people << person
   # want to read into single file and regex out some stats ...
 
@@ -80,7 +107,7 @@ CSV.foreach('hired_data.csv',CSV_CONFIG) do |row|
 end
 
 
-File.open('airport_challenge_summary.yml','a') { |f| f.write people.to_yaml }
+File.open('airport_challenge_summary.yml','w') { |f| f.write people.to_yaml }
 # people = YAML.read File.read('airport_challenge_summary.yml')
 
 # then dump this to YAML?  we'll have a dataset that includes all the necessary data?
