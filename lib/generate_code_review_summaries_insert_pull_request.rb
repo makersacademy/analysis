@@ -2,10 +2,11 @@ require 'csv'
 require 'octokit'
 require 'yaml'
 require 'byebug'
+require 'awesome_print'
 
 CSV_CONFIG = { headers: true, header_converters: :symbol, return_headers: true }
 
-CHALLENGE = 'rps_challenge'
+CHALLENGE = 'takeaway_challenge'
 
 def create_review_comments
   headers = []
@@ -13,8 +14,8 @@ def create_review_comments
   CSV.foreach("#{CHALLENGE}_oct15.csv", CSV_CONFIG) do |row|
     if row.header_row?
       headers = row
-      #  NOTE THAT THE FILE DUMPED FROM GOOGLE NEEDS the FOLLOWING HEADINGS UPDATED TO EXCLUDE
-      #  THINGS EFFECTIVELY
+      # NOTE that if we've cloned the form from the previous week some 
+      # old stuff lags over ... those dud columns need deleted ...
       headers.delete :what_is_the_reviewees_github_username
       headers.delete :your_name
       headers.delete :whose_challenge_are_you_reviewing
@@ -40,25 +41,27 @@ def create_review_comments
     end
     comments << "\n\nsee https://github.com/makersacademy/#{CHALLENGE}/blob/master/docs/review.md for more details"
 
-    reviews[row[:what_is_the_reviewees_github_username]] = comments
+    reviews[row[:what_is_the_reviewees_github_username].downcase] = comments
   end
   reviews
 end
 
 def update_pull_requests
-  client =  Octokit::Client.new access_token: ENV['MAKERS_TOOLBELT_GITHUB_TOKEN']
+  client = Octokit::Client.new access_token: ENV['MAKERS_TOOLBELT_GITHUB_TOKEN']
   pull_requests = client.pull_requests "makersacademy/#{CHALLENGE.gsub('_','-')}", state: 'open', per_page: 100
 
   reviews = create_review_comments
  
   no_review = []
   pull_requests.each do |pr|
-    puts pr.to_yaml
-    puts reviews[pr.user.login].to_yaml
+    puts pr.number
+    login = pr.user.login.downcase
+    puts login
+    puts reviews[login]
     # return
     byebug
-    unless reviews[pr.user.login].nil?
-      client.add_comment "makersacademy/#{CHALLENGE.gsub('_','-')}", pr.number, reviews[pr.user.login]
+    unless reviews[login].nil?
+      # client.add_comment "makersacademy/#{CHALLENGE.gsub('_','-')}", pr.number, reviews[login]
     else
       no_review << pr.user.login
     end
