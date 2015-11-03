@@ -3,7 +3,8 @@ Data Analysis Tools
 
 Starting with some experimental scripts for data analysis
 
-TODO
+Todo
+----
 
 * [ ] ensure correct normalization
 * [ ] finish cleaning data
