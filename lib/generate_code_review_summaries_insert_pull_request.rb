@@ -2,16 +2,15 @@ require 'csv'
 require 'octokit'
 require 'yaml'
 require 'byebug'
-require 'awesome_print'
 
 CSV_CONFIG = { headers: true, header_converters: :symbol, return_headers: true }
 
-CHALLENGE = 'takeaway_challenge'
+CHALLENGE = 'chitter_challenge'
 
 def create_review_comments
   headers = []
   reviews = {}
-  CSV.foreach("#{CHALLENGE}_oct15.csv", CSV_CONFIG) do |row|
+  CSV.foreach("data/#{CHALLENGE}_oct15.csv", CSV_CONFIG) do |row|
     if row.header_row?
       headers = row
       # NOTE that if we've cloned the form from the previous week some 
@@ -22,6 +21,9 @@ def create_review_comments
       headers.delete :did_you_find_this_form_useful_in_completing_the_review
       headers.delete :any_additional_comments_on_the_code_you_reviewed
       headers.delete :timestamp
+      headers.delete :features
+      headers.delete :bonus_features
+      headers.delete :add_details_of_your_alternate_approach_to_the_review_if_you_skipped_the_rest
       next
     end
     comments = "You had your #{CHALLENGE} reviewed by **#{row[:your_name]}**.\n"
@@ -59,8 +61,9 @@ def update_pull_requests
     puts login
     puts reviews[login]
     # return
-    byebug
+    # byebug
     unless reviews[login].nil?
+      byebug
       # client.add_comment "makersacademy/#{CHALLENGE.gsub('_','-')}", pr.number, reviews[login]
     else
       no_review << pr.user.login
@@ -69,5 +72,5 @@ def update_pull_requests
   puts no_review
 end
 
-# create_review_comments
+create_review_comments
 update_pull_requests

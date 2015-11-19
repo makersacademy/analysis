@@ -2,6 +2,7 @@ require 'csv'
 require_relative 'airport_challenge'
 require_relative 'person'
 require 'yaml'
+require 'byebug'
 
 CSV_CONFIG = { headers: true, header_converters: :symbol }
 
@@ -30,25 +31,27 @@ people = []
 # end
 # people.map &:days_to_offer
 
-
 # files.select { |f| !File.exists? f[1] }.map {|f| f[0]}
 
   
-CSV.foreach('hired_data.csv',CSV_CONFIG) do |row|
+CSV.foreach('data/more_hired_data.csv',CSV_CONFIG) do |row|
   # so for each person we'd like to get some data about them, e.g #rubocop fails on their airport challenge
   # hackily we could be jumping directories to do that, or we could dump that from directories as a file?
   # or start mucking about with storing in a db?
   # dumping files feels good
   person = Person.new(row.to_hash)
 
-  
+  puts person.name
+  puts person.github_id
+  # if file doesn't exist need to drop it
   # so here we should be loading the right file - grabbing the data from it - performing correlation analysis (ruby package for that https://github.com/sciruby/statsample ?)
   file = "../airport_challenge/analysis/#{person.github_id}.txt"
   airport_challenge_data = File.read(file) 
   rspec_tests = airport_challenge_data[/(\d+) examples, (\d+) failure/, 1]
   rspec_pending = airport_challenge_data[/(\d+) examples, (\d+) failures?, (\d+) pending/, 3]
   # TODO check for values here - or should we exclude those who didn't submit anything?
-  rspec_test -= rspec_pending
+  rspec_test -= rspec_pending unless rspec_test.nil?
+
   rspec_failures = airport_challenge_data[/(\d+) examples, (\d+) failure/, 2]
 
   rubocop_files_inspected = airport_challenge_data[/(\d+) files inspected, (\d+) offenses detected/, 1]
@@ -57,10 +60,10 @@ CSV.foreach('hired_data.csv',CSV_CONFIG) do |row|
   reek_warnings = airport_challenge_data[/(\d+) total warning/, 1]
 
   coverage_percentages = airport_challenge_data.scan(/\[\d+m(\d+)\%/)
+  coverall_coverage = 0
   unless coverage_percentages.empty?
     coverall_coverage = coverage_percentages.map { |p| p[0].to_i }.inject(:+)/coverage_percentages.count
   end
-
 
   person.airport_challenge = AirportChallenge.new rspec_tests: rspec_tests, 
     rspec_failures: rspec_failures, 
@@ -83,7 +86,10 @@ CSV.foreach('hired_data.csv',CSV_CONFIG) do |row|
   # * guspowell --> airport challenge not linked (should check when first submitted)
   # * ddemkiw --> https://github.com/ddemkiw/Airport (redo - can we grab first version?)
   # * mgedw --> account deleted
-  # 
+  # * jllakin --> broken code - default to zero coverage?s
+  # * alexparkinson1 --> no airport challenge repo --> all zero?
+  # * newmanj77 --> jjnewman
+  # * jakealvarez --> no airport challenge repo
   # should there be coverage data for specs? I think not - but if it's consistent, then okay I guess
   # 
   #  JUNK DATA FOR MOST OF DECEMBER AND FEBRUARY COHORTS - need to check all repos and redo basir
@@ -95,9 +101,9 @@ CSV.foreach('hired_data.csv',CSV_CONFIG) do |row|
   # "stepholdcorn", "marcinwal", "matteomanzo", "jindai1783", "sandagolcea", 
 
   # "emilysas", "ptolemybarnes", "lukeclewlow", "jacobmitchinson", "jakealvarez", 
-  # "GabeMaker", "noughtsandones", "newmanj77", "katebeavis", "c-christenson", 
+  # "GabeMaker", "noughtsandones", "jjnewman", "katebeavis", "c-christenson", 
   # "alexparkinson1", "ErikAGriffin", "costassarris", "wardymate", "robertpulson",
-  # "TStrothjohann", "tomcoakes", " kevinlanzon", "sphaughton", "SebastienPires",
+  # "TStrothjohann", "tomcoakes", "kevinlanzon", "sphaughton", "SebastienPires",
   # "guidovitafinzi", "vvirgitti", "tommasobratto", "eddbrown", "braunsnow", "Pau1fitz",
   # "velingcreate", "loris-fo", "meads58", "RizAli", "jdiegoromero", "user9319062"] 
   people << person
@@ -107,7 +113,7 @@ CSV.foreach('hired_data.csv',CSV_CONFIG) do |row|
 end
 
 
-File.open('airport_challenge_summary.yml','w') { |f| f.write people.to_yaml }
+File.open('data/airport_challenge_summary.yml','w') { |f| f.write people.to_yaml }
 # people = YAML.read File.read('airport_challenge_summary.yml')
 
 # then dump this to YAML?  we'll have a dataset that includes all the necessary data?

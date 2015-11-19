@@ -1,0 +1,83 @@
+GIT
+  remote: git://github.com/domitry/nyaplot.git
+  revision: 91a7cdce4ef8fb9cc5d8ded632e519a6079164a8
+  specs:
+    nyaplot (0.1.6)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.3.8)
+    awesome_print (1.6.1)
+    bond (0.5.1)
+    byebug (6.0.2)
+    clbustos-rtf (0.4.2)
+    daru (0.1.1)
+      reportbuilder (~> 1.4)
+      spreadsheet (~> 1.0.3)
+    dirty-memoize (0.0.4)
+    distribution (0.7.3)
+    extendmatrix (0.4)
+    faraday (0.9.2)
+      multipart-post (>= 1.2, < 3)
+    iruby (0.2.7)
+      bond (~> 0.5)
+      mimemagic (~> 0.3)
+      multi_json (~> 1.11)
+      rbczmq (~> 1.7)
+    mimemagic (0.3.0)
+    minimization (0.2.3)
+      text-table (~> 1.2)
+    multi_json (1.11.2)
+    multipart-post (2.0.0)
+    octokit (4.1.1)
+      sawyer (~> 0.6.0, >= 0.5.3)
+    prawn (0.8.4)
+      prawn-core (>= 0.8.4, < 0.9)
+      prawn-layout (>= 0.8.4, < 0.9)
+      prawn-security (>= 0.8.4, < 0.9)
+    prawn-core (0.8.4)
+    prawn-layout (0.8.4)
+    prawn-security (0.8.4)
+    prawn-svg (0.9.1.11)
+      prawn (>= 0.8.4)
+    rbczmq (1.7.9)
+    reportbuilder (1.4.2)
+      clbustos-rtf (~> 0.4.0)
+      prawn (~> 0.8.4)
+      prawn-svg (~> 0.9.1)
+      text-table (~> 1.2)
+    rserve-client (0.3.1)
+    ruby-ole (1.2.11.8)
+    rubyvis (0.6.1)
+    sawyer (0.6.0)
+      addressable (~> 2.3.5)
+      faraday (~> 0.8, < 0.10)
+    spreadsheet (1.0.8)
+      ruby-ole (>= 1.0)
+    statsample (2.0.1)
+      awesome_print (~> 1.6)
+      daru (~> 0.1)
+      dirty-memoize (~> 0.0.4)
+      distribution (~> 0.7)
+      extendmatrix (~> 0.4)
+      minimization (~> 0.2)
+      reportbuilder (~> 1.4)
+      rserve-client (~> 0.3)
+      rubyvis (~> 0.6.1)
+      spreadsheet (~> 1.0.3)
+    text-table (1.2.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  awesome_print
+  byebug
+  iruby
+  nyaplot!
+  octokit
+  statsample
+
+BUNDLED WITH
+   1.10.6
